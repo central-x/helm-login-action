@@ -1,0 +1,33 @@
+name: "Helm Login Action (OCI-based)"
+description: "Login to OCI-based Helm Registry"
+author: "Alan Yeh"
+branding:
+  icon: anchor
+  color: blue
+inputs:
+  registry:
+    description: "Registry location"
+    required: true
+    default: "registry-1.docker.io"
+  username:
+    description: "Username for registry"
+    required: true
+  password:
+    description: "Password for registry"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: pyTooling/Actions/with-post-step@v0.4.5
+      with:
+        main: |
+          echo "Logging in to ${{ inputs.registry }} ..."
+          helm registry login \
+            --username ${{ inputs.username }} \
+            --password ${{ inputs.password }} \
+            ${{ inputs.registry }}
+
+        post: |
+          echo "Logging out of ${{ inputs.registry }} ..."
+          helm registry logout ${{ inputs.registry }}
